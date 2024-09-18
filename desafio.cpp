@@ -133,9 +133,16 @@ void determinarTipoOnda(){
     strcpy(tipoOnda, "Senoidal");
   }
   
-  if (esSenoidal) Serial.println("Onda Senoidal");
-  if (esCuadrada) Serial.println("Onda Cuadrada");
-  if (esTriangular) Serial.println("Onda Triangular");
+  if (esSenoidal) {
+    Serial.println("Onda Senoidal");
+  } else if (esCuadrada) {
+    Serial.println("Onda Cuadrada");
+  } else if (esTriangular) {
+    Serial.println("Onda Triangular");
+  } else {
+    strcpy(tipoOnda, "Desconocido");
+    Serial.println("Onda Desconocida");
+  }
 
   delay(1000);
 }

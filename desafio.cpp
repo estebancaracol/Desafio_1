@@ -43,7 +43,7 @@ void loop(){
 
 void manejarBotones(){
   
-    if (digitalRead(botonInicio) == LOW && !adquiriendo){
+  if (digitalRead(botonInicio) == LOW && !adquiriendo){
     adquiriendo = true;
     lcd.clear();
     lcd.print("Adquiriendo...");
@@ -59,7 +59,6 @@ void manejarBotones(){
 }
  
 void adquiriendoMuestras(){
-  
   
   val = analogRead(pinEntrada);
   valoresAnalogicos[indice] = val;
@@ -97,7 +96,7 @@ void procesarSenal(){
       tiempoAnterior = tiempoActual;
     }
 
-  	ultimoValor = valoresAnalogicos[i];
+    ultimoValor = valoresAnalogicos[i];
   }
   
   determinarTipoOnda();
@@ -107,6 +106,7 @@ void determinarTipoOnda(){
   
   int maxDelta = 0;
   int cuentaConstante = 0;
+  int transiciones = 0;
   bool tieneCambiosLineales = true;
   
   esSenoidal = false;
@@ -121,16 +121,23 @@ void determinarTipoOnda(){
     if (i >= 2 && delta != abs(valoresAnalogicos[i - 1] - valoresAnalogicos[i - 2])){
       tieneCambiosLineales = false;
     }
+    
+    if ((valoresAnalogicos[i] >= 512 && valoresAnalogicos[i - 1] < 512) || (valoresAnalogicos[i] < 512 && valoresAnalogicos[i - 1] >= 512)){
+      transiciones++;
+    }
   }
+  
   if (cuentaConstante > numMuestras / 2) {
     esCuadrada = true;
     strcpy(tipoOnda, "Cuadrada");
-  } else if (tieneCambiosLineales) {
+  } else if (tieneCambiosLineales && transiciones >= 2) {
     esTriangular = true;
     strcpy(tipoOnda, "Triangular");
-  } else {
+  } else if (transiciones >= 2 && maxDelta > 50 && !tieneCambiosLineales){
     esSenoidal = true;
     strcpy(tipoOnda, "Senoidal");
+  } else {
+    strcpy(tipoOnda, "Desconocido");
   }
   
   if (esSenoidal) {
@@ -140,7 +147,6 @@ void determinarTipoOnda(){
   } else if (esTriangular) {
     Serial.println("Onda Triangular");
   } else {
-    strcpy(tipoOnda, "Desconocido");
     Serial.println("Onda Desconocida");
   }
 

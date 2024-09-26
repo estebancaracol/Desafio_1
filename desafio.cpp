@@ -22,8 +22,8 @@ int ultimoValor = 0;
 
 void setup(){
   
-  pinMode(botonInicio, INPUT_PULLUP);
-  pinMode(botonPausa, INPUT_PULLUP);
+  pinMode(botonInicio, INPUT);
+  pinMode(botonPausa, INPUT);
   pinMode(pinEntrada, INPUT);
   
   Serial.begin(9600);
@@ -43,14 +43,14 @@ void loop(){
 
 void manejarBotones(){
   
-  if (digitalRead(botonInicio) == LOW && !adquiriendo){
+  if (digitalRead(botonInicio) == HIGH && !adquiriendo){
     adquiriendo = true;
     lcd.clear();
     lcd.print("Adquiriendo...");
     delay(1000);
   }
     
-  if (digitalRead(botonPausa) == LOW && adquiriendo){
+  if (digitalRead(botonPausa) == HIGH && adquiriendo){
     enPausa = !enPausa;
     lcd.clear();
     lcd.print(enPausa ? "En Pausa..." : "Reanudando...");
